@@ -1,7 +1,8 @@
-;; to run this, open in emacs (slime must be installed) and run C-c
-;; C-k then call the progn in the bottom of the file (with C-M-x). the
-;; draw function can be changed and the image should update
-;; imediately. in order to stop displaying set *run-gl* to nil.
+;; to run this, open in emacs (slime must be installed) and compile
+;; the file (using C-c C-k) then call the progn in the bottom of the
+;; file (with C-M-x). the draw function can be changed and the image
+;; should update imediately. in order to stop displaying set *run-gl*
+;; to nil.
 
 #.(load "/home/pi/quicklisp/setup.lisp")
 (eval-when (:compile-toplevel :execute :load-toplevel)

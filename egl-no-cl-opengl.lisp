@@ -3,6 +3,12 @@
 ;; Licence: GPLv2 or later
 ;;
 
+;; to run this, open in emacs (slime must be installed) and compile
+;; the file (using C-c C-k) then call the progn in the bottom of the
+;; file (with C-M-x). the draw function can be changed and the image
+;; should update imediately. in order to stop displaying set *run-gl*
+;; to nil.
+
 ;; this common lisp program opens an egl context on the raspberry pi
 ;; and displays a moving bar with opengl-es. this is independent of
 ;; x-window and will even work in the command line.  to run this, you
