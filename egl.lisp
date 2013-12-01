@@ -1,14 +1,7 @@
-
-;; the following code must be run once, to parse the egl headers and
-;; convert the resulting ffi files into the ccl database that makes
-;; the foreign functions available
-
-#+nil
-(create-interfaces "raspberry-pi-vc")
-#+nil
-(require "parse-ffi")
-#+nil
-(ccl::parse-standard-ffi-files :raspberry-pi-vc)
+;; to run this, open in emacs (slime must be installed) and run C-c
+;; C-k then call the progn in the bottom of the file (with C-M-x). the
+;; draw function can be changed and the image should update
+;; imediately. in order to stop displaying set *run-gl* to nil.
 
 #.(load "/home/pi/quicklisp/setup.lisp")
 (eval-when (:compile-toplevel :execute :load-toplevel)
@@ -34,11 +27,11 @@
 (init-vars)
 
 #.(defparameter *attrib-list* (list #$EGL_RED_SIZE 8
-				  #$EGL_GREEN_SIZE 8
-				  #$EGL_BLUE_SIZE 8
-				  #$EGL_ALPHA_SIZE 8
-				  #$EGL_SURFACE_TYPE #$EGL_WINDOW_BIT
-				  #$EGL_NONE))
+				    #$EGL_GREEN_SIZE 8
+				    #$EGL_BLUE_SIZE 8
+				    #$EGL_ALPHA_SIZE 8
+				    #$EGL_SURFACE_TYPE #$EGL_WINDOW_BIT
+				    #$EGL_NONE))
 
 (defun init-egl ()
   (#_bcm_host_init)
@@ -92,27 +85,25 @@
  (defun draw ()
    (incf v 6)
    (when (< 360 v) (setf v 0))
-   (#_glClearColor (coerce (* .3 (1+ (sin (* pi v (/ 180f0)))))
-			   'single-float) .0f0 .0f0 .0f0)
-      (#_glClear #$GL_COLOR_BUFFER_BIT)
-   (#_glMatrixMode #$GL_MODELVIEW)
+   (clear-color (coerce (* .3 (1+ (sin (* pi v (/ 180f0)))))
+			'single-float) .0f0 .0f0 .0f0)
+   (clear :color-buffer-bit)
+   (matrix-mode :modelview)
    
    (progn
-	(#_glLoadIdentity)
-	;;	(#_glScalef .2f0 10f0 1f0)
-	(scale .2 10 1) ;; this is just an example, that it is possible to use cl-opengl calls
-
-   (#_glTranslatef (coerce (* 20f0 (sin (* pi (/ 180) v))) 'single-float) 0f0 -10f0)
-   (rletz ((quadx (:array #>GLbyte #.(* 4 3))))
-     (let ((i 0))
-      (loop for  (x y) in '((-1 -1)
-				       (1 -1)
-				       (-1 1)
-				       (1 1))
-	 do (loop for e in (list x y 0) do
-		 (setf (paref quadx #>GLbyte i) e)
-		 (incf i))))
-     (#_glEnableClientState #$GL_VERTEX_ARRAY)
+     (load-identity)
+     (scale .2 10 1)
+     (translate (* 20 (sin (* pi (/ 180) v))) 0 -10)
+     (rletz ((quadx (:array #>GLbyte #.(* 4 3))))
+       (let ((i 0))
+	 (loop for  (x y) in '((-1 -1)
+			       (1 -1)
+			       (-1 1)
+			       (1 1))
+	    do (loop for e in (list x y 0) do
+		    (setf (paref quadx #>GLbyte i) e)
+		    (incf i))))
+     (enable-client-state :vertex-array)
      (#_glVertexPointer 3 #$GL_BYTE 0 quadx)
      (#_glColor4f .9f0 .3f0 .3f0 1f0)
      (#_glDrawArrays #$GL_TRIANGLE_STRIP 0 4)))
@@ -129,8 +120,8 @@
 
      (assert (/= (#_eglMakeCurrent *display* *surface* *surface* *context*) #$EGL_FALSE))
    
-     (#_glClearColor .9f0 .25f0 .35f0 1.0f0)
-     (#_glMatrixMode #$GL_MODELVIEW)
+     (clear-color .9 .25 .35 1.0)
+     (matrix-mode :modelview)
      (#_glViewport 0 0 (first *size*) (second *size*))
      (#_glMatrixMode #$GL_PROJECTION)
      (#_glLoadIdentity)
