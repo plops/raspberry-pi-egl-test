@@ -105,8 +105,9 @@
 		    (setf (paref quadx #>GLbyte i) e)
 		    (incf i))))
      (enable-client-state :vertex-array)
-     (#_glVertexPointer 3 #$GL_BYTE 0 quadx)
-     (#_glColor4f .9f0 .3f0 .3f0 1f0)
+     ;     (#_glVertexPointer 3 #$GL_BYTE 0 quadx)
+     (gl:vertex-pointer 3 :byte 0 quadx)
+     (color .9 .3 .3 1)
      (#_glDrawArrays #$GL_TRIANGLE_STRIP 0 4)))
    (#_eglSwapBuffers *display* *surface*)))
 
